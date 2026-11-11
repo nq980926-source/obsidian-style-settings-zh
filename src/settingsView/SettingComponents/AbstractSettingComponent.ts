@@ -1,3 +1,4 @@
+import { getOptionSearchTerms } from '../../OptionLabels';
 import { CSSSetting } from '../../SettingHandlers';
 import { CSSSettingsManager } from '../../SettingsManager';
 import { getDescription, getTitle } from '../../Utils';
@@ -57,10 +58,10 @@ export abstract class AbstractSettingComponent extends Component {
 		const title = getTitle(this.setting);
 		const description = getDescription(this.setting) || '';
 
-		return Math.max(
-			fuzzysort.single(str, title)?.score ?? Number.NEGATIVE_INFINITY,
-			fuzzysort.single(str, description)?.score ?? Number.NEGATIVE_INFINITY
-		);
+		const terms = [title, description, this.setting.title, this.setting.description || ''];
+        if ('options' in this.setting) terms.push(...getOptionSearchTerms(this.setting));
+        return terms.reduce((score, term) => Math.max(score,
+            fuzzysort.single(str, term)?.score ?? Number.NEGATIVE_INFINITY), Number.NEGATIVE_INFINITY);
 	}
 
 	/**

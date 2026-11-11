@@ -1,3 +1,4 @@
+import { getOptionLabel } from '../../OptionLabels';
 import {
 	ClassMultiToggle,
 	resetTooltip,
@@ -42,9 +43,9 @@ export class ClassMultiToggleSettingComponent extends AbstractSettingComponent {
 
 			for (const o of this.setting.options) {
 				if (typeof o === 'string') {
-					dropdown.addOption(o, o);
+					dropdown.addOption(o, getOptionLabel(this.setting, o));
 				} else {
-					dropdown.addOption(o.value, o.label);
+					dropdown.addOption(o.value, getOptionLabel(this.setting, o));
 				}
 			}
 
@@ -92,10 +93,7 @@ export class ClassMultiToggleSettingComponent extends AbstractSettingComponent {
 		const defaultOption = this.getDefaultOption();
 
 		if (defaultOption) {
-			if (typeof defaultOption === 'string') {
-				return defaultOption;
-			}
-			return defaultOption.label;
+			return getOptionLabel(this.setting, defaultOption);
 		}
 
 		return undefined;

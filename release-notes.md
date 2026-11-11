@@ -1,11 +1,9 @@
-# 1.0.11 主题中文语言匹配修复
+# 1.0.12 下拉选项中文化
 
-- 优先通过 Obsidian 官方 getLanguage API 读取当前语言，旧主程序回退到原 localStorage 方式。
-- 每次显示主题标题和说明时读取语言，避免模块加载时缓存语言。
-- 将 zh-CN、zh_CN、zh-SG、zh-Hans 及其地区变体归一到主题通用的 zh 字段。
-- 保留英文、繁体中文及缺少翻译时的原文回退行为。
-- 使用 Blue Topaz 当前 theme.css 验证 General settings、Color scheme、Background images、Layout、Detail settings、Typography 六类标题读取现有中文。
+- 为 class-select、variable-select 增加通用显示标签处理，优先使用主题 label.<语言码>。
+- 简体中文下增加少量常用词译名；工具栏/布局相关词结合设置 ID 和标题判断，不确定时保留英文。
+- Blue Topaz 左工具栏样例：固定显示、向左自动隐藏、向左自动隐藏（保留侧栏展开按钮）、气泡式、气泡式（向左自动隐藏）；Default 显示为默认。
+- 下拉列表、选中项、默认值说明保持一致；顶部设置搜索支持选项中英文。
+- 不修改主题、选项 value、CSS class、默认值或持久化格式，无新增依赖。
 
-不修改主题文件、CSS 变量、设置 ID 或配置格式，无新增依赖。1.0.10 保留供回退。
-
-类型检查、生产构建、针对性回归测试和排除 Windows CRLF 的 ESLint 均通过。未进行真实设备与 BRAT 安装测试；用户设备中具体的旧语言存储值未读取。
+类型检查、生产构建、静态检查及针对性控件测试通过。公开资源结构遵循 BRAT，1.0.11 保留供回退。尚未进行 Windows、Android 和 BRAT 的实际安装测试。

@@ -23,3 +23,12 @@
 - npm run typecheck、npm run build、npx eslint ./src --rule 'linebreak-style: off'：通过。
 - 保留 minAppVersion；对 getLanguage 做可用性检测，未增加运行时依赖。
 - 未读取用户实际设备运行时状态，未进行 Windows/Android/BRAT 实际安装测试。
+
+## 1.0.12 针对性验证（2026-11-12）
+
+- 检查两个原生 DropdownComponent 渲染器、SelectOption 结构和设置搜索，添加独立轻量标签函数。
+- Blue Topaz left-ribbon-style 五个值的行为来自 CSS：普通隐藏时连同切换按钮移出，retention drawer 变体保留侧栏切换按钮；气泡变体给动作/设置分组添加圆角边框并可叠加向左隐藏。
+- npm run typecheck、npm run build、npx eslint ./src --rule 'linebreak-style: off'：通过。
+- node verify-option-labels.cjs E:/AI/blue-topaz-theme.css：通过；使用控件替身执行两种实际组件 render/onChange/reset，确认每个 option value 和回调写入值不变、默认值不变、选中项显示一致，中英文选项搜索均可命中；主题译名优先、英文/繁体/已有中文/未知词回退通过。
+- node verify-theme-language.cjs、node verify-local.cjs：通过。配置管理器仍保持原样；本次改动的四个文件交由专门控件测试验证。
+- 未新增运行时依赖、未修改主题文件；Windows、Android、BRAT 实机安装仍未执行。

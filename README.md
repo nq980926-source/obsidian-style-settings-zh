@@ -2,7 +2,7 @@
 
 集中调整 Obsidian 主题、插件和 CSS 代码片段的样式设置。本项目仅对上游插件进行简体中文汉化，保留原有功能和配置格式。
 
-- 汉化版：**1.0.11**；上游稳定版：**1.0.9**。
+- 汉化版：**1.0.12**；上游稳定版：**1.0.9**。
 - 上游提交：`4ebec6ae0131a9d5e8307bb5e26d59db5ba2e81c`。
 - 原项目：https://github.com/community-archive/obsidian-style-settings
 - 插件 ID：`obsidian-style-settings`（保持不变）。
@@ -53,3 +53,13 @@ Blue Topaz 当前发布渠道使用 master/theme.css（manifest 2026110301），
 1.0.10 只在模块加载时读取一次 localStorage 语言且精确匹配字段；主程序语言 API 与旧存储不同、加载后语言改变或地区码不同都可能造成英文回退。1.0.11 使用官方语言 API（1.8.7+）并在每次读取标题/说明时刷新语言，保留旧 Obsidian 兼容性和第三方原文回退。不增加主题专用翻译表。
 
 验证：`node verify-theme-language.cjs`；可传入单独下载的 Blue Topaz theme.css 路径验证六类实际标题。1.0.10 Release 保留可供回退。尚未读取用户设备运行时语言值，未进行实机 BRAT 安装测试。
+
+## 1.0.12 下拉选项显示翻译
+
+支持 class-select 和 variable-select。选项对象可提供 `label.zh`（其他语言使用 `label.<语言码>`），优先使用主题提供的非空译名。简体中文下，缺少译名时仅匹配少量通用词：Default、Auto、Custom、Enabled、Disabled。Fixed、Hide to left、Hide to the left retention drawer、Bubble、Bubble, hide to left 只在工具栏上下文匹配；Bubble 也适用于布局上下文。上下文由设置 ID 和原始标题判断，不绑定 Blue Topaz 主题 ID。未知标签保留原文，不翻译品牌或配色名。
+
+左工具栏样例：Fixed → 固定显示；Hide to left → 向左自动隐藏；Hide to the left retention drawer → 向左自动隐藏（保留侧栏展开按钮）；Bubble → 气泡式；Bubble, hide to left → 气泡式（向左自动隐藏）；Default → 默认。保留按钮的判断来自 Blue Topaz 的侧栏切换按钮 CSS；气泡式表示圆角浮动分组样式。
+
+列表项、选中项和默认值说明统一使用同一标签函数；原生下拉控件保持不变。顶部设置搜索可通过选项英文原名或中文译名找到所属设置，不增加自定义可搜索下拉控件。只变更显示文字，不改原始选项、value、CSS class、默认值或持久化结构。新旧主题无需改文件。
+
+验证：`node verify-option-labels.cjs`，可额外传入 Blue Topaz theme.css 路径。包含两种控件渲染、选中项、选择/重置原值、中文英文搜索、本地化优先和保守回退测试。Windows/Android 实机尚未验证，无新增运行时依赖。1.0.11 Release 保留供回退。

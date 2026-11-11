@@ -78,6 +78,7 @@ export interface ClassToggle extends Meta {
 
 export interface SelectOption {
 	label: string;
+	[key: `label.${string}`]: string | undefined;
 	value: string;
 }
 
