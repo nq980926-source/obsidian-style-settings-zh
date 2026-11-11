@@ -1,3 +1,4 @@
+import { displayText } from './translation/TranslationService';
 import { Meta, WithDescription, WithTitle } from './SettingHandlers';
 import { getThemeLanguage, t } from './lang/helpers';
 import Pickr from '@simonwep/pickr';
@@ -9,10 +10,10 @@ export type ErrorList = Array<{ name: string; error: string }>;
 export function getTitle<T extends Meta>(config: T): string {
 	const lang = getThemeLanguage();
 	if (lang) {
-		return config[`title.${lang}` as keyof WithTitle] || config.title;
+		return config[`title.${lang}` as keyof WithTitle] || displayText(config, 'title', config.title);
 	}
 
-	return config.title;
+	return displayText(config, 'title', config.title);
 }
 
 export function getDescription<T extends Meta>(config: T): string | undefined {
@@ -20,11 +21,11 @@ export function getDescription<T extends Meta>(config: T): string | undefined {
 	if (lang) {
 		return (
 			config[`description.${lang}` as keyof WithDescription] ||
-			config.description
+			(config.description ? displayText(config, 'description', config.description) : undefined)
 		);
 	}
 
-	return config.description;
+	return config.description ? displayText(config, 'description', config.description) : undefined;
 }
 
 export function isValidDefaultColor(color: string) {

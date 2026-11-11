@@ -13,3 +13,9 @@ data.json
 .env
 
 .hotreload
+# Local automatic translation state (never publish credentials or cache)
+translation-settings.json
+translation-cache.json
+
+# Local development build artifacts
+candidate/

@@ -2,7 +2,7 @@
 
 集中调整 Obsidian 主题、插件和 CSS 代码片段的样式设置。本项目仅对上游插件进行简体中文汉化，保留原有功能和配置格式。
 
-- 汉化版：**1.0.12**；上游稳定版：**1.0.9**。
+- 汉化版：**1.1.0**；上游稳定版：**1.0.9**。
 - 上游提交：`4ebec6ae0131a9d5e8307bb5e26d59db5ba2e81c`。
 - 原项目：https://github.com/community-archive/obsidian-style-settings
 - 插件 ID：`obsidian-style-settings`（保持不变）。
@@ -63,3 +63,21 @@ Blue Topaz 当前发布渠道使用 master/theme.css（manifest 2026110301），
 列表项、选中项和默认值说明统一使用同一标签函数；原生下拉控件保持不变。顶部设置搜索可通过选项英文原名或中文译名找到所属设置，不增加自定义可搜索下拉控件。只变更显示文字，不改原始选项、value、CSS class、默认值或持久化结构。新旧主题无需改文件。
 
 验证：`node verify-option-labels.cjs`，可额外传入 Blue Topaz theme.css 路径。包含两种控件渲染、选中项、选择/重置原值、中文英文搜索、本地化优先和保守回退测试。Windows/Android 实机尚未验证，无新增运行时依赖。1.0.11 Release 保留供回退。
+
+## 1.1.0：可配置 AI 自动翻译
+
+在 Style Settings 设置页的“AI 自动翻译”区域，自行填写 **API Base URL**、**Model ID**，并通过 Obsidian 官方密钥选择器选择已有 **API Key**。地址和模型默认留空，不绑定任何服务商。在线翻译默认关闭；填写配置不代表同意发送请求。主动开启后，只有允许发送、仍缺少中文的当前主题设置文案才进入翻译队列。测试连接按钮会发送一条固定测试文案，可能产生少量费用。
+
+在线功能需要 Obsidian 1.11.4+ 的 SecretStorage/SecretComponent。旧版继续使用已有本地汉化，在线功能禁用。密钥原文只保存在官方密钥库；本插件独立 translation-settings.json 只存密钥名称、开关、地址及模型，translation-cache.json 存上下文缓存和可靠 Token 统计，不改变原有 data.json。
+
+显示优先级：主题原生中文 → 本地词典 → 本地缓存 → 用户启用后的 AI 翻译 → 失败时原文。支持标准 OpenAI Chat Completions 非流式接口，JSON Mode 不受支持时最多回退一次提示词约束 JSON，并继续严格校验结果。不自动切换供应商/模型、不搭建服务器、不发送工具请求。不保证每家服务都接受同一组标准参数，也不通过专属参数控制各家模型的内部推理模式。
+
+API Base URL 应填写公网 HTTPS 基础地址（例如 https://api.example.com/v1），程序追加 /chat/completions；不要填写完整请求路径、查询参数或嵌入密钥。修改地址、模型、密钥后自动关闭开关并忽略旧结果；缓存按接口和模型隔离，切回原配置可复用。
+
+只对能够核实来源的当前主题设置文案自动联网翻译，自定义 CSS Snippet 不联网翻译。路径、链接、代码、占位符、疑似密钥、Markdown 信息项及无法确定安全的格式保守跳过。不能核实主题来源时继续使用本地中文和英文回退。普通机器翻译可能不准确，可通过文字提示查看原文。
+
+**验证状态：**候选阶段类型检查、构建、静态检查和 Mock 测试通过；1.1.0 发布前完成版本与产物检查并重新生产构建。未经授权未使用真实 API Key、未发起付费请求；Windows/Android 实际 Obsidian 表现、SecretStorage 界面和真实模型兼容性尚未实机验收。本次按用户接受剩余风险的决定正式发布。
+
+**回退：**保留 1.0.12 Release 和标签。如需回退，在 BRAT 为本仓库选择并冻结 1.0.12；不要卸载插件，以保留 data.json。翻译缓存和偏好文件可保留，旧版不会使用它们。
+
+实现与候选测试细节见 [历史开发记录](DEVELOPMENT-CANDIDATE.md)；当前发布状态以本节和 GitHub Release 为准。

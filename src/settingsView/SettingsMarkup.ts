@@ -1,3 +1,4 @@
+import { renderTranslationSettings } from '../translation/TranslationSettings';
 import { CSSSetting, ParsedCSSSettings } from '../SettingHandlers';
 import { ErrorList } from '../Utils';
 import CSSSettingsPlugin from '../main';
@@ -12,6 +13,7 @@ export class SettingsMarkup extends Component {
 	plugin: CSSSettingsPlugin;
 	settingsComponentTrees: HeadingSettingComponent[] = [];
 	filterString: string = '';
+	private cleanupTranslationSettings: (() => void) | undefined;
 	settings: ParsedCSSSettings[] = [];
 	errorList: ErrorList = [];
 	containerEl: HTMLElement;
@@ -36,6 +38,7 @@ export class SettingsMarkup extends Component {
 	}
 
 	onunload(): void {
+		this.cleanupTranslationSettings?.();
 		this.settingsComponentTrees = [];
 	}
 
@@ -109,6 +112,8 @@ export class SettingsMarkup extends Component {
 		const { containerEl, plugin } = this;
 
 		containerEl.empty();
+		this.cleanupTranslationSettings?.();
+		if (!this.isView) this.cleanupTranslationSettings = renderTranslationSettings(containerEl, this.plugin.translation);
 
 		this.cleanup();
 		this.displayErrors();
@@ -197,6 +202,7 @@ export class SettingsMarkup extends Component {
 				...s.settings,
 			];
 
+			this.plugin.translation.inherit(s, options[0]);
 			try {
 				const settingsComponentTree = buildSettingComponentTree({
 					containerEl: this.settingsContainerEl,

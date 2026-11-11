@@ -1,3 +1,4 @@
+import { bindSetting } from '../../translation/DisplayBinding';
 import { getOptionSearchTerms } from '../../OptionLabels';
 import { CSSSetting } from '../../SettingHandlers';
 import { CSSSettingsManager } from '../../SettingsManager';
@@ -37,11 +38,16 @@ export abstract class AbstractSettingComponent extends Component {
 			: this.parent.childEl;
 	}
 
+	private unbindTranslation: (() => void) | undefined;
 	onload(): void {
 		this.render();
+		const view = (this as any).settingEl;
+		if (view) this.unbindTranslation = bindSetting(this.setting, view);
 	}
 
 	onunload(): void {
+		this.unbindTranslation?.();
+		this.unbindTranslation = undefined;
 		this.destroy();
 	}
 

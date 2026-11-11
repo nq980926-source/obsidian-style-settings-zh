@@ -1,7 +1,7 @@
 {
   "id": "obsidian-style-settings",
   "name": "样式设置（Style Settings）",
-  "version": "1.0.12",
+  "version": "1.1.0",
   "minAppVersion": "0.11.5",
   "description": "集中调整 Obsidian 主题、插件和 CSS 代码片段的样式设置。",
   "author": "mgmeyers",

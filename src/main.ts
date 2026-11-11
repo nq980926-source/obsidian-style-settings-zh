@@ -1,3 +1,4 @@
+import { TranslationService } from './translation/TranslationService';
 import { ClassToggle, ParsedCSSSettings } from './SettingHandlers';
 import { CSSSettingsManager } from './SettingsManager';
 import {
@@ -19,6 +20,10 @@ import yaml from 'js-yaml';
 import { Command, Plugin } from 'obsidian';
 
 export default class CSSSettingsPlugin extends Plugin {
+	translation: TranslationService;
+	private trustedThemeCSS = '';
+	private trustedThemeName = '';
+	private parseRevision = 0;
 	settingsManager: CSSSettingsManager;
 	settingsTab: CSSSettingsTab;
 	settingsList: ParsedCSSSettings[] = [];
@@ -28,6 +33,8 @@ export default class CSSSettingsPlugin extends Plugin {
 	darkEl: HTMLElement;
 
 	async onload() {
+		this.translation = new TranslationService(this.app, `${this.app.vault.configDir}/plugins/${this.manifest.id}`);
+		await this.translation.load();
 		this.settingsManager = new CSSSettingsManager(this);
 
 		await this.settingsManager.load();
@@ -82,6 +89,14 @@ export default class CSSSettingsPlugin extends Plugin {
 		});
 	}
 
+	private async loadTrustedTheme() {
+        const name = (this.app as any).customCss?.theme;
+        if (typeof name !== 'string' || !name || (/[/\\:]/.test(name) || Array.from(name).some(c => c.charCodeAt(0) < 32)) || name === '.' || name === '..') return;
+        try {
+            const css = await this.app.vault.adapter.read(`${this.app.vault.configDir}/themes/${name}/theme.css`);
+            return { css: css.trim().replace(/\r\n/g, '\n'), name };
+        } catch { /* Unknown source stays local-only. Never guess snippet provenance. */ }
+    }
 	getCSSVar(id: string) {
 		const light = getComputedStyle(this.lightEl).getPropertyValue(`--${id}`);
 		const dark = getComputedStyle(this.darkEl).getPropertyValue(`--${id}`);
@@ -93,7 +108,13 @@ export default class CSSSettingsPlugin extends Plugin {
 
 	parseCSS() {
 		clearTimeout(this.debounceTimer);
-		this.debounceTimer = activeWindow.setTimeout(() => {
+		this.debounceTimer = activeWindow.setTimeout(async () => {
+			const revision = ++this.parseRevision;
+			this.translation.resetGeneration();
+			const trusted = await this.loadTrustedTheme();
+			if (revision !== this.parseRevision) return;
+			this.trustedThemeCSS = trusted?.css || '';
+			this.trustedThemeName = trusted?.name || '';
 			this.settingsList = [];
 			this.errorList = [];
 
@@ -215,6 +236,7 @@ export default class CSSSettingsPlugin extends Plugin {
 						settings.settings &&
 						settings.settings.length
 					) {
+						if (this.trustedThemeCSS && text.replace(/\r\n/g, '\n') === this.trustedThemeCSS) this.translation.registerSection(settings, this.trustedThemeName);
 						this.settingsList.push(settings);
 					}
 				} catch (e) {
@@ -287,6 +309,9 @@ export default class CSSSettingsPlugin extends Plugin {
 	}
 
 	onunload() {
+		clearTimeout(this.debounceTimer);
+		this.parseRevision++;
+		this.translation.dispose();
 		this.lightEl.remove();
 		this.darkEl.remove();
 

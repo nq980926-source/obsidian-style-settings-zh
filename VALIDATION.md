@@ -32,3 +32,16 @@
 - node verify-option-labels.cjs E:/AI/blue-topaz-theme.css：通过；使用控件替身执行两种实际组件 render/onChange/reset，确认每个 option value 和回调写入值不变、默认值不变、选中项显示一致，中英文选项搜索均可命中；主题译名优先、英文/繁体/已有中文/未知词回退通过。
 - node verify-theme-language.cjs、node verify-local.cjs：通过。配置管理器仍保持原样；本次改动的四个文件交由专门控件测试验证。
 - 未新增运行时依赖、未修改主题文件；Windows、Android、BRAT 实机安装仍未执行。
+
+## 1.1.0-dev.1 本地开发候选
+
+最终需求已调整为用户配置的单一 OpenAI Chat Completions 接口。详情见 DEVELOPMENT-CANDIDATE.md。所有翻译请求仅使用 Mock；未使用真实凭证或付费 API。本候选未发布，1.0.12 仍为正式版。
+
+## 1.1.0 正式发布检查（2026-11-12）
+
+- 用户明确接受真实 API 与 Windows/Android 未实机验收的剩余风险，授权使用现有仓库正式发布。
+- 仅定版和更新文档，沿用 1.1.0-dev.1 已通过的实现与完整 Mock 测试结果，不增加功能，不重构，不重复完整测试。
+- AI 自动翻译初始 enabled=false；地址、模型、密钥名称初始为空；自动请求受 enabled、密钥库、配置和队列状态约束。
+- 保留 SecretStorage、独立缓存、原设置管理器与 data.json 格式，没有读取其他插件私人配置或使用真实 API Key。
+- 发布前重新生产构建，核对版本、ID、构建资源和公开下载内容。
+- 未创建独立测试仓库或测试知识库；1.0.12 Release/标签保留。Windows/Android 和真实 API 尚未验证。

@@ -1,3 +1,4 @@
+import { displayText } from './translation/TranslationService';
 import { ClassMultiToggle, SelectOption, VariableSelect } from './SettingHandlers';
 import { getThemeLanguage } from './lang/helpers';
 
@@ -32,7 +33,7 @@ export function getOptionLabel(setting: SelectSetting, option: string | SelectOp
         if (Object.prototype.hasOwnProperty.call(labels, key)) return labels[key];
     }
     if (layout && key === 'bubble') return '气泡式';
-    return Object.prototype.hasOwnProperty.call(common, key) ? common[key] : original;
+    return Object.prototype.hasOwnProperty.call(common, key) ? common[key] : displayText(setting, `option:${setting.options.indexOf(option)}`, original);
 }
 
 export function getOptionSearchTerms(setting: SelectSetting): string[] {
