@@ -2,7 +2,7 @@
 
 集中调整 Obsidian 主题、插件和 CSS 代码片段的样式设置。本项目仅对上游插件进行简体中文汉化，保留原有功能和配置格式。
 
-- 汉化版：**1.0.10**；上游稳定版：**1.0.9**。
+- 汉化版：**1.0.11**；上游稳定版：**1.0.9**。
 - 上游提交：`4ebec6ae0131a9d5e8307bb5e26d59db5ba2e81c`。
 - 原项目：https://github.com/community-archive/obsidian-style-settings
 - 插件 ID：`obsidian-style-settings`（保持不变）。
@@ -25,7 +25,7 @@
 
 ## 主题中文与兼容性
 
-Obsidian 语言设为简体中文（zh）后，继续使用上游机制读取第三方设置的 `title.zh` 和 `description.zh`。未提供中文的主题、插件、CSS 片段会回退到原文；本项目不修改第三方 CSS，不更改设置 ID、CSS 变量或默认值，也不使用在线翻译。
+Obsidian 语言设为简体中文后，优先通过官方 getLanguage API 实时读取语言，旧版本回退到 localStorage；zh-CN / zh-Hans 等简体中文地区码归一到 zh，再读取第三方设置的 `title.zh` 和 `description.zh`。未提供中文的主题、插件、CSS 片段会回退到原文；本项目不修改第三方 CSS，不更改设置 ID、CSS 变量或默认值，也不使用在线翻译。
 
 本汉化版自身界面固定使用简体中文。JSON、CSS、HEX/RGBA/HSLA 等技术名称和第三方解析器返回的底层诊断保留原文。
 
@@ -45,3 +45,11 @@ Obsidian 语言设为简体中文（zh）后，继续使用上游机制读取第
 
 [上游使用文档](README.upstream.md) · [BRAT 官方开发指南](https://github.com/TfTHacker/obsidian42-brat/blob/main/BRAT-DEVELOPER-GUIDE.md)
 
+
+## 1.0.11 主题中文修复
+
+Blue Topaz 当前发布渠道使用 master/theme.css（manifest 2026110301），旧 Release v6.0 明确提示已不再以 Release 发布最新主题。当前 theme.css 提供 477 个 title.zh 和 77 个 description.zh，包含整体性设置、整体配色、背景设置、界面布局、细节设置和排版。
+
+1.0.10 只在模块加载时读取一次 localStorage 语言且精确匹配字段；主程序语言 API 与旧存储不同、加载后语言改变或地区码不同都可能造成英文回退。1.0.11 使用官方语言 API（1.8.7+）并在每次读取标题/说明时刷新语言，保留旧 Obsidian 兼容性和第三方原文回退。不增加主题专用翻译表。
+
+验证：`node verify-theme-language.cjs`；可传入单独下载的 Blue Topaz theme.css 路径验证六类实际标题。1.0.10 Release 保留可供回退。尚未读取用户设备运行时语言值，未进行实机 BRAT 安装测试。

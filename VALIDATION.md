@@ -11,3 +11,15 @@
 - GPL v3 LICENSE.md 原样保留；上游 package.json 的 MIT 元数据冲突已说明；打包依赖版权见 THIRD_PARTY_NOTICES.txt，esbuild 内嵌法律注释保留于 main.js。
 - BRAT 当前官方指南及源码已检查：使用 GitHub Releases 的语义版本选择和三个独立资源，非冻结版本可更新；同 ID 安装只写程序资源，保留 data.json。
 - Windows / Android Obsidian 实机功能、手机触摸和 BRAT 实际安装未执行。未访问用户仓库或笔记数据。
+
+## 1.0.11 针对性验证（2026-11-12）
+
+- Blue Topaz master 533c228f9719f37e64b0d35453aa568283b3e9b6，theme.css，manifest 2026110301；v6.0 Release 提示不再代表当前主题版本。
+- 实际解析 2 个 @settings 块、632 项设置，477 个 title.zh、77 个 description.zh；用户列出的六类标题均已有中文。
+- 修复前：存储为 zh 可正确显示；存储为 en/null/zh-CN 会回退英文，即使插件自身固定中文。
+- 修复后：官方 API 优先、旧主程序回退、简体中文地区码匹配、运行中语言刷新、英文/繁体保留、缺失翻译回退通过。
+- node verify-theme-language.cjs E:/AI/blue-topaz-theme.css：六类实际 Blue Topaz 标题测试通过；CSS 仅下载到独立验证路径，未改用户主题文件。
+- node verify-local.cjs：配置管理器原样、未涉及的内部标识符和安装资源检查通过。
+- npm run typecheck、npm run build、npx eslint ./src --rule 'linebreak-style: off'：通过。
+- 保留 minAppVersion；对 getLanguage 做可用性检测，未增加运行时依赖。
+- 未读取用户实际设备运行时状态，未进行 Windows/Android/BRAT 实际安装测试。

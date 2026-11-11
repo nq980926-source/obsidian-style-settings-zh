@@ -1,3 +1,4 @@
+import * as obsidian from 'obsidian';
 import { ar } from './locale/ar';
 import { cz } from './locale/cz';
 import { da } from './locale/da';
@@ -23,7 +24,17 @@ import { uk } from './locale/uk';
 import { zh } from './locale/zh';
 import { zhTw } from './locale/zhTw';
 
-export const lang: string | null = window.localStorage.getItem('language');
+// Prefer the public API (Obsidian 1.8.7+), retaining compatibility with older hosts.
+export function getThemeLanguage(): string | null {
+    const api = obsidian as typeof obsidian & { getLanguage?: () => string };
+    const language = typeof api.getLanguage === 'function'
+        ? api.getLanguage()
+        : window.localStorage.getItem('language');
+    if (language && /^(zh|zh-cn|zh-sg|zh-hans(?:-[a-z]+)?)$/i.test(language.replace(/_/g, '-'))) {
+        return 'zh';
+    }
+    return language;
+}
 
 const localeMap: { [k: string]: Partial<typeof en> } = {
 	ar,
@@ -56,7 +67,7 @@ const locale = localeMap.zh;
 
 export function t(str: keyof typeof en): string {
 	if (!locale) {
-		console.error('样式设置：未找到界面语言', lang);
+		console.error('样式设置：未找到界面语言', getThemeLanguage());
 	}
 
 	return (locale && locale[str]) || en[str];

@@ -1,6 +1,6 @@
 {
   "name": "obsidian-style-settings",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "集中调整 Obsidian 主题、插件和 CSS 代码片段的样式设置。",
   "main": "main.js",
   "scripts": {

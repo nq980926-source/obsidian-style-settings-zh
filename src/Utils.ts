@@ -1,5 +1,5 @@
 import { Meta, WithDescription, WithTitle } from './SettingHandlers';
-import { lang, t } from './lang/helpers';
+import { getThemeLanguage, t } from './lang/helpers';
 import Pickr from '@simonwep/pickr';
 
 export const settingRegExp = /\/\*!?\s*@settings[\r\n]+?([\s\S]+?)\*\//g;
@@ -7,6 +7,7 @@ export const nameRegExp = /^name:\s*(.+)$/m;
 export type ErrorList = Array<{ name: string; error: string }>;
 
 export function getTitle<T extends Meta>(config: T): string {
+	const lang = getThemeLanguage();
 	if (lang) {
 		return config[`title.${lang}` as keyof WithTitle] || config.title;
 	}
@@ -15,6 +16,7 @@ export function getTitle<T extends Meta>(config: T): string {
 }
 
 export function getDescription<T extends Meta>(config: T): string | undefined {
+	const lang = getThemeLanguage();
 	if (lang) {
 		return (
 			config[`description.${lang}` as keyof WithDescription] ||

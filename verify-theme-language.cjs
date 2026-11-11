@@ -1,0 +1,10 @@
+const fs=require('fs'),assert=require('assert'),vm=require('vm'),esbuild=require('esbuild'),yaml=require('js-yaml');
+const output=esbuild.buildSync({entryPoints:['src/Utils.ts'],bundle:true,write:false,platform:'node',format:'cjs',external:['obsidian','@simonwep/pickr']}).outputFiles[0].text;
+function host(apiLanguage,storedLanguage,hasAPI=true){let current=apiLanguage;const api=hasAPI?{getLanguage:()=>current}:{};const ctx={module:{exports:{}},exports:{},window:{localStorage:{getItem:()=>storedLanguage}},console,require:id=>id==='obsidian'?api:{}};vm.runInNewContext(output,ctx);return {u:ctx.module.exports,setLanguage:l=>current=l};}
+const c={title:'English','title.zh':'中文', 'title.zh-TW':'繁體', description:'English description','description.zh':'中文说明'};
+for(const code of ['zh','zh-CN','zh_CN','zh-Hans','zh-Hans-CN','zh-SG']){for(const api of [true,false]){const h=host(code,api?'en':code,api);assert.equal(h.u.getTitle(c),'中文');assert.equal(h.u.getDescription(c),'中文说明');}}
+assert.equal(host('en','zh').u.getTitle(c),'English');assert.equal(host('zh-TW','zh').u.getTitle(c),'繁體');assert.equal(host(null,null,false).u.getTitle(c),'English');assert.equal(host('zh','en').u.getTitle({title:'fallback'}),'fallback');
+const h=host('en','en');assert.equal(h.u.getTitle(c),'English');h.setLanguage('zh');assert.equal(h.u.getTitle(c),'中文');
+if(process.argv[2]) { const css=fs.readFileSync(process.argv[2],'utf8');const settings=[...css.matchAll(/\/\*!?\s*@settings[\r\n]+?([\s\S]+?)\*\//g)].flatMap(m=>yaml.load(m[1]).settings||[]).filter(Boolean);const found=settings.filter(s=>/^[12](?:\.[123])?\.?\s(?:General settings|Color scheme|Background images|Layout|Detail settings|Typography)$/i.test(s.title));assert.equal(found.length,6);for(const s of found){assert(s['title.zh']);assert.equal(h.u.getTitle(s),s['title.zh']);} }
+console.log('PASS: official API overrides stale storage; simplified aliases; older host fallback; English/traditional preserved; runtime language refresh; all six Blue Topaz headings translated');
+

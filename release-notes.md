@@ -1,11 +1,11 @@
-# 1.0.10 简体中文汉化版
+# 1.0.11 主题中文语言匹配修复
 
-基于上游稳定版 1.0.9（4ebec6ae0131a9d5e8307bb5e26d59db5ba2e81c）。
+- 优先通过 Obsidian 官方 getLanguage API 读取当前语言，旧主程序回退到原 localStorage 方式。
+- 每次显示主题标题和说明时读取语言，避免模块加载时缓存语言。
+- 将 zh-CN、zh_CN、zh-SG、zh-Hans 及其地区变体归一到主题通用的 zh 字段。
+- 保留英文、繁体中文及缺少翻译时的原文回退行为。
+- 使用 Blue Topaz 当前 theme.css 验证 General settings、Color scheme、Background images、Layout、Detail settings、Typography 六类标题读取现有中文。
 
-- 汉化插件自身界面、命令、导入导出、搜索、重置提示和颜色选择器。
-- 保留插件 ID、设置存储格式和主题已有的 title.zh / description.zh 支持。
-- 通过 BRAT 1.1.0+ 添加本仓库，选择 latest 安装及更新。
-- 已安装英文版时先导出备份并禁用，不要卸载，再由 BRAT 添加本仓库。
-- 类型检查、生产构建通过；Windows、Android 和 BRAT 实际安装尚未进行实机测试。
+不修改主题文件、CSS 变量、设置 ID 或配置格式，无新增依赖。1.0.10 保留供回退。
 
-Release 附件 main.js、manifest.json、styles.css 为插件安装文件。许可证与验证详情见仓库。
+类型检查、生产构建、针对性回归测试和排除 Windows CRLF 的 ESLint 均通过。未进行真实设备与 BRAT 安装测试；用户设备中具体的旧语言存储值未读取。
