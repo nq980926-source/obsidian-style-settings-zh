@@ -16,7 +16,9 @@ export function renderTranslationSettings(
 		enableToggle?.setValue(service.preferences.enabled);
 	};
 	const supported =
-		!!service.secretStorage && !!(obsidian as any).SecretComponent;
+		!!service.secretStorage &&
+		!!(obsidian as any).SecretComponent &&
+		typeof (Setting.prototype as any).addComponent === 'function';
 	new Setting(root)
 		.setName('启用 AI 自动翻译')
 		.setDesc(
@@ -39,16 +41,27 @@ export function renderTranslationSettings(
 		.setDesc(
 			'选择官方密钥库中的现有密钥，或在官方密钥管理入口添加。不会读取其他插件配置。'
 		);
+	let secretMounted = false;
 	if (supported) {
-		const secret = new (obsidian as any).SecretComponent(
-			secretSetting.controlEl
-		);
-		secret
-			.setValue(service.preferences.secretName)
-			.onChange(async (name: string | null) => {
-				await update({ secretName: name || '', enabled: false });
-			});
+		try {
+			(secretSetting as any).addComponent((el: HTMLElement) =>
+				new (obsidian as any).SecretComponent(service.app, el)
+					.setValue(service.preferences.secretName)
+					.onChange(async (name: string | null) => {
+						await update({ secretName: name || '', enabled: false });
+					})
+			);
+			secretMounted = true;
+		} catch {
+			// One failed component must not abort the rest of the settings page.
+			enableToggle?.setDisabled(true).setValue(false);
+			void service.configure({ enabled: false });
+			secretSetting.setDesc(
+				'官方密钥选择器加载失败，在线翻译已停用。地址和模型仍可编辑；请重新打开设置后重试。'
+			);
+		}
 	}
+
 	new Setting(root)
 		.setName('API Base URL')
 		.setDesc(
@@ -90,7 +103,7 @@ export function renderTranslationSettings(
 		);
 	const button = new ButtonComponent(testSetting.controlEl)
 		.setButtonText('测试连接')
-		.setDisabled(!supported);
+		.setDisabled(!secretMounted);
 	button.onClick(async () => {
 		button.setDisabled(true);
 		try {

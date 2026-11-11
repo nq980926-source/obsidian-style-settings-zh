@@ -45,3 +45,12 @@
 - 保留 SecretStorage、独立缓存、原设置管理器与 data.json 格式，没有读取其他插件私人配置或使用真实 API Key。
 - 发布前重新生产构建，核对版本、ID、构建资源和公开下载内容。
 - 未创建独立测试仓库或测试知识库；1.0.12 Release/标签保留。Windows/Android 和真实 API 尚未验证。
+
+## 1.1.1 界面缺陷修复（2026-11-12）
+
+- 对照官方 SecretComponent(app, containerEl) 和 Setting.addComponent 文档确认 1.1.0 参数缺失，非 CSS 隐藏问题。
+- verify-translation-settings-ui.cjs 使用严格双参数构造契约：旧版代码抛错且没有创建地址、模型和按钮；修复版创建全部控件并正确注册组件。
+- 验证地址/模型编辑、密钥名称回调、开关、显式连接按钮的 Mock 回调；密钥控件失败/安全密钥库不受支持时，其余字段继续显示。
+- 保留先前翻译/缓存架构，仅调整 TranslationSettings.ts 的界面挂载和异常边界，补强原 UI Mock 的构造契约。
+- 运行针对性回归、类型检查、生产构建及改动文件静态检查，不重复整个主题/翻译测试矩阵。
+- 未访问其他插件配置、未使用真实密钥、未进行付费 API 调用；Windows/Android 实机仍未验证。

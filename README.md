@@ -2,7 +2,7 @@
 
 集中调整 Obsidian 主题、插件和 CSS 代码片段的样式设置。本项目仅对上游插件进行简体中文汉化，保留原有功能和配置格式。
 
-- 汉化版：**1.1.0**；上游稳定版：**1.0.9**。
+- 汉化版：**1.1.1**；上游稳定版：**1.0.9**。
 - 上游提交：`4ebec6ae0131a9d5e8307bb5e26d59db5ba2e81c`。
 - 原项目：https://github.com/community-archive/obsidian-style-settings
 - 插件 ID：`obsidian-style-settings`（保持不变）。
@@ -81,3 +81,11 @@ API Base URL 应填写公网 HTTPS 基础地址（例如 https://api.example.com
 **回退：**保留 1.0.12 Release 和标签。如需回退，在 BRAT 为本仓库选择并冻结 1.0.12；不要卸载插件，以保留 data.json。翻译缓存和偏好文件可保留，旧版不会使用它们。
 
 实现与候选测试细节见 [历史开发记录](DEVELOPMENT-CANDIDATE.md)；当前发布状态以本节和 GitHub Release 为准。
+
+## 1.1.1 设置界面修复
+
+修正官方 SecretComponent 的构造参数：通过 Setting.addComponent 挂载，并同时传入 App 和容器。1.1.0 缺少 App 参数，运行时异常会导致后续 API Base URL、Model ID 和测试连接控件未创建，并中断设置页余下内容。
+
+本次仅修复已有界面，保留原翻译、缓存和配置格式。密钥控件意外初始化失败时停用在线翻译，后续地址、模型等控件仍能显示。针对性回归测试重现旧错误，并验证正确挂载、输入修改、密钥名称选择、开关和测试连接回调（全部 Mock，无真实 API Key 或付费请求）。保留 1.1.0 Release 和标签供回退。
+
+[官方 SecretStorage / SecretComponent 使用文档](https://docs.obsidian.md/plugins/guides/secret-storage)。Windows/Android 实机及真实 API 验证状态保持如上，不将 Mock 测试描述为实机测试。
