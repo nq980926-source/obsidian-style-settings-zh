@@ -1,0 +1,30 @@
+name: Publish plugin release
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing version tag matching manifest.json
+        required: true
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci
+      - run: npm run typecheck && npm run build
+      - name: Validate version
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: node -e 'if(require("./manifest.json").version !== process.env.RELEASE_TAG) process.exit(1)'
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: gh release create "$RELEASE_TAG" --verify-tag --title "$RELEASE_TAG" --notes-file release-notes.md main.js manifest.json styles.css
